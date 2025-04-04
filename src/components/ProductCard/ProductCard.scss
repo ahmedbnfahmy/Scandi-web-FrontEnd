@@ -1,0 +1,75 @@
+.product-listing-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    
+    .category-title {
+      font-size: 2.5rem;
+      font-weight: 600;
+      margin-bottom: 2.5rem;
+      color: #222;
+      text-align: center;
+      letter-spacing: -0.5px;
+    }
+    
+    .loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 50vh;
+      font-size: 1.2rem;
+      color: #666;
+      
+      &::before {
+        content: "";
+        width: 24px;
+        height: 24px;
+        margin-right: 12px;
+        border: 3px solid #eee;
+        border-top-color: #0066cc;
+        border-radius: 50%;
+        animation: spinner 0.8s linear infinite;
+      }
+    }
+    
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+      gap: 2rem;
+      
+      @media (max-width: 768px) {
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 1.5rem;
+      }
+      
+      @media (max-width: 480px) {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+      }
+      
+      @media (max-width: 320px) {
+        grid-template-columns: 1fr;
+      }
+    }
+  }
+  
+  @keyframes spinner {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  // No products found message
+  .product-grid:empty {
+    min-height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    &::after {
+      content: "No products found in this category";
+      font-size: 1.1rem;
+      color: #888;
+      font-style: italic;
+    }
+  }
