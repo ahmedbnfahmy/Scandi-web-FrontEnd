@@ -1,14 +1,15 @@
 .product-listing-page {
-    max-width: 1200px;
+    width: 95%;
     margin: 0 auto;
     padding: 2rem;
+    
     
     .category-title {
       font-size: 2rem;
       font-weight: 700;
       margin-bottom: 2rem;
-      color: #333;
-      text-align: center;
+      color: #332b2b;
+      text-align: left;
       position: relative;
       
       &::after {
@@ -17,7 +18,7 @@
         bottom: -10px;
         left: 50%;
         transform: translateX(-50%);
-        width: 80px;
+        // width: 80px;
         height: 3px;
         background-color: #0066cc;
         border-radius: 2px;
@@ -33,7 +34,9 @@
     
     .product-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      grid-template-columns: repeat(3, 1fr);
+      justify-items: center; 
+
       gap: 2rem;
       
       @media (max-width: 768px) {

@@ -81,6 +81,30 @@ const ProductListingPage: React.FC = () => {
             color: { options: ['black', 'silver'], selected: 'black' }
           }
         },
+        {
+          id: '4',
+          name: 'Lap ',
+          price: 199.99,
+          inStock: false,
+          image: '/headphoness.jpg',
+          gallery: ['/headphones.jpg', '/headphones-2.jpg'],
+          category: 'tech',
+          attributes: {
+            color: { options: ['black', 'silver'], selected: 'black' }
+          }
+        },
+        {
+          id: '5',
+          name: 'Lap Top',
+          price: 199.99,
+          inStock: false,
+          image: '/headphoness.jpg',
+          gallery: ['/headphones.jpg', '/headphones-2.jpg'],
+          category: 'tech',
+          attributes: {
+            color: { options: ['black', 'silver'], selected: 'black' }
+          }
+        },
         
       ];
       setProducts(mockProducts);
@@ -98,7 +122,6 @@ const ProductListingPage: React.FC = () => {
   const currentCategory = categories.find(cat => cat.id === categoryId) || { name: 'All Products' };
 
   const addToCart = (product: Product) => {
-    // Add product with default attributes to cart
     const productToAdd = {
       ...product,
       attributes: Object.fromEntries(
