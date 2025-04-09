@@ -40,7 +40,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
       attributes: Object.fromEntries(
         Object.entries(product.attributes).map(([key, val]) => [
           key,
-          { ...val, selected: val.options[0] } 
+          { ...val, selected: val.options[0] }
         ])
       )
     });
@@ -65,6 +65,16 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
           {!product.inStock && (
             <div className="out-of-stock-label">Out of Stock</div>
           )}
+          {product.inStock && (
+        <button
+          className="quick-shop-btn"
+          onClick={handleAddToCart}
+          data-testid={`quick-shop-${product.name.toLowerCase().replace(/\s+/g, '-')}`}
+          aria-label="Add to cart" // For accessibility
+        >
+          <ShoppingCartIcon />
+        </button>
+      )}
         </div>
 
         <div className="product-info">
@@ -73,16 +83,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
         </div>
       </Link>
 
-      {/* {product.inStock && (
-        <button
-          className="quick-shop-btn"
-          onClick={handleAddToCart}
-          data-testid={`quick-shop-${product.name.toLowerCase().replace(/\s+/g, '-')}`}
-        >
-          <ShoppingCartIcon />
-          Quick Shop
-        </button>
-      )} */}
+      
     </div>
   );
 };
