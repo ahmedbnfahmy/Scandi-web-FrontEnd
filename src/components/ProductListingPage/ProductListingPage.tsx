@@ -1,156 +1,98 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import ProductCard from '../ProductCard/ProductCard';
+import { useProductData } from '../../context/ProductDataContext';
+import { useCart } from '../../context/CartContext';
 import './ProductListingPage.scss';
 
-interface Product {
-  id: string;
-  name: string;
-  price: number;
-  inStock: boolean;
-  image: string;
-  category: string;
-  gallery: string[];
-  attributes: {
-    [key: string]: {
-      options: string[];
-      selected: string;
-    };
-  };
-}
-
-interface Category {
-  id: string;
-  name: string;
-}
-
 const ProductListingPage: React.FC = () => {
-  const { categoryId = 'all' } = useParams();
-  const [products, setProducts] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const { categoryId } = useParams<{ categoryId: string }>();
+  const navigate = useNavigate();
+  
+  // Use context values directly instead of copying to local state
+  const { 
+    products, 
+    loading, 
+    error, 
+    fetchProducts 
+  } = useProductData();
+  
+  const { addToCart } = useCart();
+  
+  const [categories] = useState<string[]>(['all', 'clothes', 'tech', 'accessories']);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(categoryId || null);
 
+  // Fetch products only when component mounts or category changes
   useEffect(() => {
-    // Simulate API fetch for categories (should match your header categories)
-    const fetchCategories = async () => {
-      const mockCategories: Category[] = [
-        { id: 'all', name: 'All' },
-        { id: 'clothes', name: 'Clothes' },
-        { id: 'tech', name: 'Tech' },
-        { id: 'furniture', name: 'Furniture' }
-      ];
-      setCategories(mockCategories);
-    };
-
-    const fetchProducts = async () => {
-      const mockProducts: Product[] = [
-        {
-          id: '1',
-          name: 'Black T-Shirt',
-          price: 29.99,
-          inStock: true,
-          image: '/black-tshirt.jpg',
-          gallery: ['/black-tshirt.jpg', '/black-tshirt-2.jpg'],
-          category: 'clothes',
-          attributes: {
-            size: { options: ['S', 'M', 'L'], selected: 'M' },
-            color: { options: ['black', 'white'], selected: 'black' }
-          }
-        },
-        {
-          id: '2',
-          name: 'Wireless Headphones',
-          price: 199.99,
-          inStock: false,
-          image: '/headphones.jpg',
-          gallery: ['/headphones.jpg', '/headphones-2.jpg'],
-          category: 'tech',
-          attributes: {
-            color: { options: ['black', 'silver'], selected: 'black' }
-          }
-        },
-        {
-          id: '3',
-          name: 'Lap Top',
-          price: 199.99,
-          inStock: true,
-          image: '/headphoness.jpg',
-          gallery: ['/headphones.jpg', '/headphones-2.jpg'],
-          category: 'tech',
-          attributes: {
-            color: { options: ['black', 'silver'], selected: 'black' }
-          }
-        },
-        {
-          id: '4',
-          name: 'Lap ',
-          price: 199.99,
-          inStock: false,
-          image: '/headphoness.jpg',
-          gallery: ['/headphones.jpg', '/headphones-2.jpg'],
-          category: 'tech',
-          attributes: {
-            color: { options: ['black', 'silver'], selected: 'black' }
-          }
-        },
-        {
-          id: '5',
-          name: 'Lap Top',
-          price: 199.99,
-          inStock: true,
-          image: '/headphoness.jpg',
-          gallery: ['/headphones.jpg', '/headphones-2.jpg'],
-          category: 'tech',
-          attributes: {
-            color: { options: ['black', 'silver'], selected: 'black' }
-          }
-        },
-        
-      ];
-      setProducts(mockProducts);
-      setIsLoading(false);
-    };
-
-    fetchCategories();
-    fetchProducts();
-  }, []);
-
-  const filteredProducts = categoryId === 'all'
-    ? products
-    : products.filter(product => product.category === categoryId);
-
-  const currentCategory = categories.find(cat => cat.id === categoryId) || { name: 'All Products' };
-
-  const addToCart = (product: Product) => {
-    const productToAdd = {
-      ...product,
-      attributes: Object.fromEntries(
-        Object.entries(product.attributes).map(([key, val]) => [
-          key,
-          { ...val, selected: val.options[0] }
-        ])
-      ),
-      quantity: 1
-    };
-    console.log('Added to cart:', productToAdd);
-    // Implement your actual cart state management here
+    if (categoryId !== selectedCategory) {
+      setSelectedCategory(categoryId || null);
+    }
+    
+    fetchProducts(categoryId);
+    // Don't include 'products' in the dependency array
+  }, [categoryId, fetchProducts]);
+  
+  // Handle category selection
+  const handleCategorySelect = (category: string) => {
+    setSelectedCategory(category);
+    navigate(`/${category === 'all' ? '' : category}`);
+  };
+  
+  // Handle add to cart
+  const handleAddToCart = (product: any) => {
+    addToCart(product, {});
   };
 
-  if (isLoading) return <div className="loading">Loading...</div>;
+  if (loading) {
+    return <div className="loading">Loading products...</div>;
+  }
+
+  if (error) {
+    return (
+      <div className="error-message">
+        <h2>Error loading products</h2>
+        <p>{error.message}</p>
+        <button onClick={() => fetchProducts(selectedCategory || undefined)}>
+          Try Again
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="product-listing-page">
-      <h1 className="category-title">{currentCategory.name}</h1>
-      
-      <div className="product-grid">
-        {filteredProducts.map(product => (
-          <ProductCard
-            key={product.id}
-            product={product}
-            onAddToCart={addToCart}
-          />
+      {/* Category Navigation */}
+      <div className="category-nav">
+        {categories.map(category => (
+          <button
+            key={category}
+            className={`category-btn ${selectedCategory === category ? 'active' : ''}`}
+            onClick={() => handleCategorySelect(category)}
+          >
+            {category.charAt(0).toUpperCase() + category.slice(1)}
+          </button>
         ))}
       </div>
+      
+      {/* Category Title */}
+      <h1 className="category-title">
+        {selectedCategory ? selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1) : 'All Products'}
+      </h1>
+      
+      {/* Products Grid */}
+      {products.length === 0 ? (
+        <div className="no-products">No products found.</div>
+      ) : (
+        <div className="product-grid">
+          {products.map(product => (
+            <ProductCard
+              key={product.id}
+              product={product}
+              onAddToCart={() => handleAddToCart(product)}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };

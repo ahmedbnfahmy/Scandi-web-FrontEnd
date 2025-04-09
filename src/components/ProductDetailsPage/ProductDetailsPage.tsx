@@ -2,105 +2,51 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 // import parse from 'html-react-parser';
 import './ProductDetailsPage.scss';
-
-// Types
-interface Attribute {
-  name: string;
-  type: 'text' | 'swatch';
-  items: Array<{
-    id: string;
-    value: string;
-    displayValue: string;
-  }>;
-}
-
-interface Product {
-  id: string;
-  name: string;
-  brand: string;
-  inStock: boolean;
-  gallery: string[];
-  description: string;
-  attributes: Attribute[];
-  prices: Array<{
-    currency: {
-      symbol: string;
-      label: string;
-    };
-    amount: number;
-  }>;
-}
+import { Product, ProductAttribute } from '../../context/types/productTypes';
+import { useProductData } from '../../context/ProductDataContext';
+import { useCart } from '../../context/CartContext';
 
 const ProductDetailsPage: React.FC = () => {
   const { productId } = useParams<{ productId: string }>();
   const navigate = useNavigate();
+  
+  // Use the product data context
+  const { 
+    product: contextProduct, 
+    loading: contextLoading, 
+    error: contextError, 
+    fetchProduct 
+  } = useProductData();
+  
+  // Use cart context if available
+  const { addToCart } = useCart();
+  
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [selectedAttributes, setSelectedAttributes] = useState<Record<string, string>>({});
 
-  // Fetch product data
+  // Fetch product data using the context
   useEffect(() => {
-    const fetchProduct = async () => {
-      try {
-        // This is a mock fetch - replace with your actual API call
-        setTimeout(() => {
-          const mockProduct: Product = {
-            id: '1',
-            name: 'Apollo Running Short',
-            brand: 'Nike',
-            inStock: true,
-            gallery: [
-              '/product-image-1.jpg',
-              '/product-image-2.jpg',
-              '/product-image-3.jpg',
-              '/product-image-4.jpg'
-            ],
-            description: '<p>Find stunning women\'s cocktail dresses and party dresses. Stand out in lace and metallic cocktail dresses and party dresses from all your favorite brands.</p>',
-            attributes: [
-              {
-                name: 'Size',
-                type: 'text',
-                items: [
-                  { id: 'xs', value: 'XS', displayValue: 'XS' },
-                  { id: 's', value: 'S', displayValue: 'S' },
-                  { id: 'm', value: 'M', displayValue: 'M' },
-                  { id: 'l', value: 'L', displayValue: 'L' }
-                ]
-              },
-              {
-                name: 'Color',
-                type: 'swatch',
-                items: [
-                  { id: 'black', value: '#000000', displayValue: 'Black' },
-                  { id: 'white', value: '#FFFFFF', displayValue: 'White' },
-                  { id: 'green', value: '#0F6450', displayValue: 'Green' }
-                ]
-              }
-            ],
-            prices: [
-              {
-                currency: { symbol: '$', label: 'USD' },
-                amount: 50.00
-              }
-            ]
-          };
-          
-          setProduct(mockProduct);
-          setLoading(false);
-        }, 500);
-      } catch (error) {
-        console.error('Error fetching product:', error);
-        setLoading(false);
-      }
-    };
-
-    fetchProduct();
-  }, [productId]);
+    if (productId) {
+      fetchProduct(productId);
+    }
+  }, [productId, fetchProduct]);
+  
+  // Update local state when context data changes
+  useEffect(() => {
+    setLoading(contextLoading);
+    setProduct(contextProduct);
+    
+    if (contextError) {
+      console.error('Error fetching product:', contextError);
+    }
+  }, [contextProduct, contextLoading, contextError]);
 
   // Initialize selected attributes
   useEffect(() => {
     if (product) {
+      console.log(product,"hello ")
       const initialAttributes: Record<string, string> = {};
       product.attributes.forEach(attr => {
         // Don't set initial values to allow user selection
@@ -152,18 +98,10 @@ const ProductDetailsPage: React.FC = () => {
   const handleAddToCart = () => {
     if (!product || !isAllAttributesSelected()) return;
     
-    const productToAdd = {
-      ...product,
-      selectedAttributes,
-      quantity: 1
-    };
+    // Use the addToCart function from context
+    addToCart(product, selectedAttributes);
     
-    console.log('Added to cart:', productToAdd);
-    // Here you would dispatch to your cart state management
-    // For example: dispatch(addToCart(productToAdd));
-    
-    // Open cart overlay
-    // For example: dispatch(openCartOverlay());
+    console.log('Added to cart:', product);
   };
 
   if (loading) {
