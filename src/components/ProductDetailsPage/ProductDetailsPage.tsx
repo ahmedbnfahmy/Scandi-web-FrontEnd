@@ -1,16 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 // import parse from 'html-react-parser';
 import './ProductDetailsPage.scss';
-import { Product, ProductAttribute } from '../../context/types/productTypes';
+import { Product } from '../../context/types/productTypes';
 import { useProductData } from '../../context/ProductDataContext';
 import { useCart } from '../../context/CartContext';
 
 const ProductDetailsPage: React.FC = () => {
   const { productId } = useParams<{ productId: string }>();
-  const navigate = useNavigate();
   
-  // Use the product data context
   const { 
     product: contextProduct, 
     loading: contextLoading, 
@@ -18,7 +16,6 @@ const ProductDetailsPage: React.FC = () => {
     fetchProduct 
   } = useProductData();
   
-  // Use cart context if available
   const { addToCart } = useCart();
   
   const [product, setProduct] = useState<Product | null>(null);
@@ -26,19 +23,15 @@ const ProductDetailsPage: React.FC = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [selectedAttributes, setSelectedAttributes] = useState<Record<string, string>>({});
 
-  // Fetch product data using the context
   useEffect(() => {
     if (productId && (!contextProduct || contextProduct.id !== productId)) {
-      console.log(`Fetching product ${productId} (not in context or different ID)`);
       fetchProduct(productId);
     } else if (contextProduct && contextProduct.id === productId) {
-      console.log(`Using cached product ${productId}`);
       setProduct(contextProduct);
       setLoading(false);
     }
   }, [productId, contextProduct, fetchProduct]);
   
-  // Update local state when context data changes, but only if the IDs match
   useEffect(() => {
     if (contextProduct && productId === contextProduct.id) {
       setLoading(contextLoading);
@@ -50,13 +43,10 @@ const ProductDetailsPage: React.FC = () => {
     }
   }, [contextProduct, contextLoading, contextError, productId]);
 
-  // Initialize selected attributes
   useEffect(() => {
     if (product) {
-      console.log(product,"hello ")
       const initialAttributes: Record<string, string> = {};
       product.attributes.forEach(attr => {
-        // Don't set initial values to allow user selection
         initialAttributes[attr.name] = '';
       });
       setSelectedAttributes(initialAttributes);
@@ -104,11 +94,7 @@ const ProductDetailsPage: React.FC = () => {
 
   const handleAddToCart = () => {
     if (!product || !isAllAttributesSelected()) return;
-    
-    // Use the addToCart function from context
     addToCart(product, selectedAttributes);
-    
-    console.log('Added to cart:', product);
   };
 
   if (loading) {
@@ -155,7 +141,6 @@ const ProductDetailsPage: React.FC = () => {
         <h1 className="pdp-title">{product.brand}</h1>
         <h2 className="pdp-subtitle">{product.name}</h2>
         
-        {/* Product Attributes */}
         {product.attributes.map(attribute => (
           <div 
             key={attribute.name}

@@ -1,30 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import ShoppingCartIcon from '../icons/ShoppingCartIcon';
+import { Product } from '../../context/types/productTypes';
 import './ProductCard.scss';
-
-interface Product {
-  id: string;
-  name: string;
-  price?: number; // Make optional since API might not provide directly
-  inStock: boolean;
-  image?: string; // Make optional since we'll use gallery instead
-  category: string;
-  gallery?: string[]; // Make sure gallery is included
-  prices?: Array<{ // Add prices from API
-    currency: {
-      symbol: string;
-      label: string;
-    };
-    amount: number;
-  }>;
-  attributes: {
-    [key: string]: {
-      options: string[];
-      selected: string;
-    };
-  };
-}
 
 interface ProductCardProps {
   product: Product;
@@ -34,22 +12,13 @@ interface ProductCardProps {
 const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
   const productImage = product.gallery && product.gallery.length > 0 
     ? product.gallery[0] 
-    : product.image || '/placeholder-image.jpg';
+    : '/placeholder-image.jpg';
   
-  // Get price from API prices array or fallback to direct price property
   const getPrice = () => {
     if (product.prices && product.prices.length > 0) {
       return product.prices[0].amount;
     }
-    return product.price || 0;
-  };
-  
-  // Get currency symbol from API prices or default to $
-  const getCurrencySymbol = () => {
-    if (product.prices && product.prices.length > 0) {
-      return product.prices[0].currency.symbol;
-    }
-    return '$';
+    return 0;
   };
   
   const formatPrice = (price: number) => {
@@ -62,19 +31,19 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
-    onAddToCart({
+    
+    console.log('Product being added:', product);
+    
+    const productToAdd = {
       ...product,
-      attributes: Object.fromEntries(
-        Object.entries(product.attributes).map(([key, val]) => [
-          key,
-          { ...val, selected: val.options[0] }
-        ])
-      )
-    });
+      attributes: product.attributes.map(attr => ({
+        ...attr,
+        selected: attr.items ? attr.items[0]?.id : 'default'
+      }))
+    };
+    
+    onAddToCart(productToAdd);
   };
-  
-  // For debugging purposes
-  console.log(`Product ${product.name} image:`, productImage);
 
   return (
     <div

@@ -1,92 +1,49 @@
 import React from 'react';
+import { CartOverlayProps } from '../../context/types/cartTypes';
 import './CartOverlay.scss';
 
-interface AttributeOption {
-    id: string;
-    value: string;
-    displayValue: string;
-}
-
-interface Attribute {
-    name: string;
-    type: 'text' | 'swatch';
-    items: AttributeOption[];
-}
-
-interface CartItem {
-    id: string;
-    name: string;
-    brand: string;
-    price: number;
-    gallery: string[];
-    quantity: number;
-    attributes: {
-        [key: string]: {
-            options: string[];
-            selected: string;
-        };
-    };
-    availableAttributes: Attribute[];
-}
-
-interface CartOverlayProps {
-    isOpen: boolean;
-    onClose: () => void;
-    cartItems: CartItem[];
-    onIncreaseQuantity: (itemId: string, selectedAttributes: Record<string, string>) => void;
-    onDecreaseQuantity: (itemId: string, selectedAttributes: Record<string, string>) => void;
-    onViewCart: () => void;
-    onCheckout: () => void;
-}
-
 const CartOverlay: React.FC<CartOverlayProps> = ({
-    isOpen,
-    onClose,
-    cartItems,
-    onIncreaseQuantity,
-    onDecreaseQuantity,
-    onViewCart,
-    onCheckout
+  isOpen,
+  onClose,
+  cartItems,
+  onIncreaseQuantity,
+  onDecreaseQuantity,
+  onViewCart,
+  onCheckout
 }) => {
-    if (!isOpen) return null;
+  if (!isOpen) return null;
 
-    // Helper function to convert attribute name to kebab case
-    const toKebabCase = (str: string) => {
-        return str
-            .toLowerCase()
-            .replace(/\s+/g, '-')
-            .replace(/[^\w-]+/g, '');
-    };
+  const toKebabCase = (str: string) => {
+    return str
+      .toLowerCase()
+      .replace(/\s+/g, '-')
+      .replace(/[^\w-]+/g, '');
+  };
 
-    // Extract selected attributes helper function
-    const extractSelectedAttributes = (attrs: {
-        [key: string]: { options: string[]; selected: string };
-    }): Record<string, string> => {
-        const selectedAttrs: Record<string, string> = {};
-        Object.entries(attrs).forEach(([key, attr]) => {
-            selectedAttrs[key] = attr.selected;
-        });
-        return selectedAttrs;
-    };
+  const extractSelectedAttributes = (attrs: {
+    [key: string]: { options: string[]; selected: string };
+  }): Record<string, string> => {
+    const selectedAttrs: Record<string, string> = {};
+    Object.entries(attrs).forEach(([key, attr]) => {
+      selectedAttrs[key] = attr.selected;
+    });
+    return selectedAttrs;
+  };
 
-    // Calculate total price
-    const totalPrice = cartItems.reduce(
-        (total, item) => total + item.price * item.quantity,
-        0
-    );
+  const totalPrice = cartItems.reduce(
+    (total, item) => total + item.price * item.quantity,
+    0
+  );
 
-    // Format price with correct currency symbol and decimal places
-    const formatPrice = (price: number) => {
-        return new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'USD',
-            minimumFractionDigits: 2
-        }).format(price);
-    };
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 2
+    }).format(price);
+  };
 
-    // Calculate total items count
-    const itemCount = cartItems.reduce((count, item) => count + item.quantity, 0);
-
+  const itemCount = cartItems.reduce((count, item) => count + item.quantity, 0);
     return (
         <div className="cart-overlay">
             <div className="cart-overlay__backdrop" onClick={onClose}></div>

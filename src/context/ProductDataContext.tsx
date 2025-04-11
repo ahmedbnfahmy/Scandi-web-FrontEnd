@@ -31,7 +31,6 @@ export const ProductDataProvider: React.FC<ProductDataProviderProps> = ({ childr
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
   
-  // Fetch a single product by ID
   const fetchProduct = useCallback(async (id: string) => {
     try {
       setLoading(true);
