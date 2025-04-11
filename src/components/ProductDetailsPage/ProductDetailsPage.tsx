@@ -28,20 +28,27 @@ const ProductDetailsPage: React.FC = () => {
 
   // Fetch product data using the context
   useEffect(() => {
-    if (productId) {
+    if (productId && (!contextProduct || contextProduct.id !== productId)) {
+      console.log(`Fetching product ${productId} (not in context or different ID)`);
       fetchProduct(productId);
+    } else if (contextProduct && contextProduct.id === productId) {
+      console.log(`Using cached product ${productId}`);
+      setProduct(contextProduct);
+      setLoading(false);
     }
-  }, [productId, fetchProduct]);
+  }, [productId, contextProduct, fetchProduct]);
   
-  // Update local state when context data changes
+  // Update local state when context data changes, but only if the IDs match
   useEffect(() => {
-    setLoading(contextLoading);
-    setProduct(contextProduct);
-    
-    if (contextError) {
-      console.error('Error fetching product:', contextError);
+    if (contextProduct && productId === contextProduct.id) {
+      setLoading(contextLoading);
+      setProduct(contextProduct);
+      
+      if (contextError) {
+        console.error('Error fetching product:', contextError);
+      }
     }
-  }, [contextProduct, contextLoading, contextError]);
+  }, [contextProduct, contextLoading, contextError, productId]);
 
   // Initialize selected attributes
   useEffect(() => {
@@ -206,4 +213,4 @@ const ProductDetailsPage: React.FC = () => {
   );
 };
 
-export default ProductDetailsPage;
+export default React.memo(ProductDetailsPage);

@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import ShoppingCartIcon from '../icons/ShoppingCartIcon';
+import { useProductData } from '../../context/ProductDataContext';
 import './Header.scss';
 
 interface Category {
@@ -11,23 +12,48 @@ interface Category {
 const Header: React.FC = () => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState('all');
-
-  const categories: Category[] = [
-    { id: 'all', name: 'All' },
-    { id: 'clothes', name: 'Clothes' },
-    { id: 'tech', name: 'Tech' },
-  ];
+  const [displayCategories, setDisplayCategories] = useState<Category[]>([]);
+  
+  const location = useLocation();
+  const { products, fetchProducts } = useProductData();
+  
+  useEffect(() => {
+    const allCategory = { id: 'all', name: 'All' };
+    
+    if (products.length > 0) {
+      const uniqueCategories = Array.from(
+        new Set(products.map(product => product.category))
+      ).map(category => ({
+        id: category,
+        name: category.charAt(0).toUpperCase() + category.slice(1)
+      }));
+      
+      setDisplayCategories([allCategory, ...uniqueCategories]);
+    } else {
+      fetchProducts();
+      setDisplayCategories([allCategory]);
+    }
+  }, [products, fetchProducts]);
+  
+  useEffect(() => {
+    const path = location.pathname.substring(1);
+    if (path === '') {
+      setActiveCategory('all');
+    } else if (path.includes('/')) {
+    } else {
+      setActiveCategory(path);
+    }
+  }, [location]);
 
   return (
     <header className="header" data-testid="header">
       <nav className="header__nav">
-        {/* Category Navigation (Left) */}
         <div className="header__nav-left">
           <ul className="header__categories">
-            {categories.map((category) => (
+            {displayCategories.map((category) => (
               <li key={category.id}>
                 <Link
-                  to={`/${category.id}`}
+                  to={category.id === 'all' ? '/' : `/${category.id}`}
                   className={`header__category-link ${
                     activeCategory === category.id ? 'header__category-link--active' : ''
                   }`}
@@ -45,7 +71,6 @@ const Header: React.FC = () => {
           </ul>
         </div>
 
-        {/* Logo (Center) */}
         <div className="header__nav-center">
           <Link
             to="/"
@@ -57,7 +82,6 @@ const Header: React.FC = () => {
           </Link>
         </div>
 
-        {/* Cart Button (Right) */}
         <div className="header__nav-right">
           <button
             className="header__cart-btn"

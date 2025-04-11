@@ -1,98 +1,140 @@
 .product-card {
-    height: 444px; 
-    width: 386px;
-    margin: 0 auto;
-    padding: 1rem;
+  .image-container {
     position: relative;
-   
-    &:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-      }
-      
-      .image-container {
-        height: 150px; 
-        width: 100%;
-        overflow: hidden;
-        position: relative;
-        
-        .product-image {
-          width: 100%;
-          height: 100%;
-          object-fit: cover; 
-          transition: transform 0.5s ease;
-        }
-        
-        &:hover .product-image {
-          transform: scale(1.05); 
-        }
+    overflow: hidden;
+    width: 100%;
+    height: 300px;
+    margin-bottom: 8px;
+    
+    .product-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      transition: transform 0.3s ease;
     }
-    .product-info {
-        padding: 1rem;
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-        text-align: left;
-        
-        h3 {
-          font-size: 1rem;
-          font-weight: 500;
-          color: #333;
-          margin: 0;
-        }
-        
-        .price {
-          font-size: 1.1rem;
-          font-weight: 600;
-          color: #0066cc;
-          margin: 0;
-        }
-      }
+    
+    &:hover .product-image {
+      transform: scale(1.05);
+    }
+    
+    .out-of-stock-label {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: rgba(255, 255, 255, 0.5);
+      color: #8D8F9A;
+      font-size: 1.5rem;
+      font-weight: 500;
+      text-transform: uppercase;
+    }
+    
+    .quick-shop-btn {
+      background-color: #28a745; 
+      border: none;
+      border-radius: 50%; 
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: absolute;
+      bottom: 1rem;
+      right: 1rem;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       
-      .product-link {
-        text-decoration: none;
-        color: inherit;
-      }
-      .quick-shop-btn {
-        background-color: #28a745; 
-        border: none;
-        border-radius: 50%; 
-        width: 44px;
-        height: 44px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        position: absolute;
-        bottom: 1rem;
-        right: 1rem;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        
-        /* Hide by default */
-        opacity: 0;
-        transform: scale(0.8);
-        pointer-events: none; 
-        
-        .cart-icon {
-          width: 24px;
-          height: 24px;
-          stroke: white;
-          stroke-width: 2;
-          fill: none;
-          color :white
-        }
-      }
+      /* Hide by default */
+      opacity: 0;
+      transform: scale(0.8);
+      pointer-events: none; 
       
-      &:hover .quick-shop-btn {
-        opacity: 1;
-        transform: scale(1);
-        pointer-events: auto; 
+      .cart-icon {
+        width: 24px;
+        height: 24px;
+        stroke: white;
+        stroke-width: 2;
+        fill: none;
+        color :white
       }
-      
-      .quick-shop-btn:hover {
-        background-color: #218838; 
-        transform: scale(1.1);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-      }
+    }
+    
+    &:hover .quick-shop-btn {
+      opacity: 1;
+      transform: scale(1);
+      pointer-events: auto; 
+    }
+    
+    .quick-shop-btn:hover {
+      background-color: #218838; 
+      transform: scale(1.1);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
   }
+  
+  .product-info {
+    padding: 8px 0;
+    text-align: left; /* Align text to the left */
+    color: #1D1F22; /* Black text color */
+    
+    h3 {
+      font-weight: 300;
+      font-size: 18px;
+      margin-bottom: 4px;
+      color: #1D1F22; /* Black text color for product name */
+      text-align: left; /* Explicit left alignment for the title */
+    }
+    
+    .price {
+      font-weight: 500;
+      font-size: 18px;
+      color: #1D1F22; /* Black text color for price */
+      text-align: left; /* Explicit left alignment for the price */
+    }
+  }
+  
+  &.out-of-stock {
+    .product-image {
+      opacity: 0.5;
+    }
+    
+    .product-info {
+      color: #8D8F9A; /* Keep out of stock text gray */
+    }
+  }
+  
+  /* Ensure links maintain black text */
+  a, a:visited, a:hover, a:active {
+    color: #1D1F22;
+    text-decoration: none;
+  }
+}
+
+// Responsive adjustments remain the same
+@media (max-width: 768px) {
+  .product-card {
+    .image-container {
+      height: 200px;
+    }
+    
+    .product-info h3 {
+      font-size: 16px;
+    }
+  }
+}
+
+// Product grid layout improvements remain the same
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 40px;
+  margin: 0 auto;
+  padding: 16px;
+  max-width: 1200px;
+}
