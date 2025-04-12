@@ -4,32 +4,27 @@ import ShoppingCartIcon from '../icons/ShoppingCartIcon';
 import CartOverlay from '../CartOverlay/CartOverlay';
 import { useProductData } from '../../context/ProductDataContext';
 import { useCart } from '../../context/CartContext';
-import { CartOverlayItem } from '../../context/types/cartTypes';
 import { Category, HeaderProps } from '../../context/types/headerTypes';
 import './Header.scss';
 
 const Header: React.FC<HeaderProps> = ({ logoText = 'MyStore' }) => {
-  // State
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState('all');
   const [displayCategories, setDisplayCategories] = useState<Category[]>([]);
   
-  // Hooks
   const location = useLocation();
   const navigate = useNavigate();
   const { products, fetchProducts } = useProductData();
-  const { items, totalItems, addToCart, removeFromCart, updateQuantity } = useCart();
+  const { items, totalItems, removeFromCart, updateQuantity } = useCart();
   
-  // Extract categories from products
   useEffect(() => {
     const allCategory = { id: 'all', name: 'All' };
     
     if (products.length > 0) {
-      // Get unique categories
       const uniqueCategories = Array.from(
         new Set(products.map(product => product.category))
       )
-      .filter(Boolean) // Remove undefined/null
+      .filter(Boolean) 
       .map(category => ({
         id: category,
         name: category.charAt(0).toUpperCase() + category.slice(1)
@@ -42,7 +37,6 @@ const Header: React.FC<HeaderProps> = ({ logoText = 'MyStore' }) => {
     }
   }, [products, fetchProducts]);
   
-  // Update active category based on URL
   useEffect(() => {
     const path = location.pathname.substring(1);
     if (path === '') {
@@ -52,7 +46,6 @@ const Header: React.FC<HeaderProps> = ({ logoText = 'MyStore' }) => {
     }
   }, [location]);
 
-  // Event handlers
   const handleCartToggle = useCallback(() => {
     setIsCartOpen(prev => !prev);
   }, []);
@@ -65,19 +58,16 @@ const Header: React.FC<HeaderProps> = ({ logoText = 'MyStore' }) => {
     setActiveCategory(categoryId);
   }, []);
   
-  // Find cart item by product ID and attributes
   const findCartItem = useCallback((productId: string, attrs: Record<string, string>) => {
     return items.find(item => {
       if (item.product.id !== productId) return false;
       
-      // Compare selected attributes
       return Object.entries(attrs).every(
         ([key, value]) => item.selectedAttributes[key] === value
       );
     });
   }, [items]);
   
-  // Cart operations
   const handleIncreaseQuantity = useCallback((productId: string, selectedAttributes: Record<string, string>) => {
     const item = findCartItem(productId, selectedAttributes);
     if (item) {
@@ -106,10 +96,8 @@ const Header: React.FC<HeaderProps> = ({ logoText = 'MyStore' }) => {
     setIsCartOpen(false);
   }, []);
   
-  // Format cart items for CartOverlay
   const formattedCartItems = useMemo(() => {
     return items.map(item => {
-      // Convert product attributes to CartOverlay format
       const availableAttributes = item.product.attributes.map(attr => ({
         name: attr.name,
         type: attr.type,
@@ -119,9 +107,7 @@ const Header: React.FC<HeaderProps> = ({ logoText = 'MyStore' }) => {
           displayValue: attrItem.displayValue
         }))
       }));
-      
-      // Format selected attributes
-      const formattedAttributes = {};
+      const formattedAttributes = {} as Record<string, { options: string[], selected: string }>;
       Object.entries(item.selectedAttributes).forEach(([key, value]) => {
         const attributeOptions = item.product.attributes
           .find(attr => attr.name === key)?.items

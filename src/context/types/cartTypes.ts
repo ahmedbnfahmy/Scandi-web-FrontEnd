@@ -17,7 +17,7 @@ export interface CartContextType {
   orderError: Error | null;
   totalItems: number;
   totalPrice: number;
-  formattedItemsCount: string; // Added formatted items count
+  formattedItemsCount: string; 
 }
 
 export interface AttributeOption {
@@ -56,7 +56,7 @@ export interface CartOverlayProps {
   onDecreaseQuantity: (itemId: string, selectedAttributes: Record<string, string>) => void;
   onViewCart: () => void;
   onCheckout: () => void;
-  formattedItemsCount?: string; // Added formatted items count as optional
-  orderLoading?: boolean; // Added to support order processing state
-  placeOrder?: () => Promise<any | null>; // Added to support order placement
+  formattedItemsCount?: string; 
+  orderLoading?: boolean; 
+  placeOrder?: () => Promise<any | null>; 
 }
