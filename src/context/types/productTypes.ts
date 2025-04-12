@@ -34,12 +34,15 @@ export interface Price {
     product: Product;
     onAddToCart: (product: Product) => void;
   }
+
   export interface ProductsResponse {
     products: Product[];
+    errors?: GraphQLError[]; 
   }
   
   export interface ProductResponse {
     product: Product;
+    errors?: GraphQLError[]; 
   }
   
   export interface CategoriesResponse {
@@ -47,15 +50,21 @@ export interface Price {
       name: string;
     }[];
   }
-  
-  // Context type
   export interface ProductDataContextType {
     loading: boolean;
     error: Error | null;
     product: Product | null;
     products: Product[];
     categories: string[];
+    connectionFailed: boolean; // Add this
     fetchProduct: (id: string) => Promise<void>;
     fetchProducts: (category?: string) => Promise<void>;
-    clearProduct: () => void;  
+    clearProduct: () => void;
   }
+  
+interface GraphQLError {
+  message: string;
+  locations?: Array<{ line: number; column: number }>;
+  path?: string[];
+  extensions?: Record<string, any>;
+}
