@@ -2,7 +2,6 @@ import { GraphQLClient } from 'graphql-request';
 
 const API_URL = import.meta.env.VITE_GRAPHQL_API || 'http://localhost:8000/graphql';
 
-// Custom fetch function to handle the "Database connection successful!" prefix
 const customFetch = async (url: RequestInfo | URL, options: RequestInit = {}) => {
   const response = await fetch(url, options);
   

@@ -7,9 +7,14 @@ import './ProductCard.scss';
 interface ProductCardProps {
   product: Product;
   onAddToCart: (product: Product) => void;
+  cartItemsCount?: number;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
+const ProductCard: React.FC<ProductCardProps> = ({ 
+  product, 
+  onAddToCart, 
+  cartItemsCount = 0 // Default to 0 if not provided
+}) => {
   const productImage = product.gallery && product.gallery.length > 0 
     ? product.gallery[0] 
     : '/placeholder-image.jpg';
@@ -27,6 +32,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
       currency: 'USD',
       minimumFractionDigits: 2
     }).format(price);
+  };
+
+  // Add this function to format items count
+  const formatItemsCount = (count: number) => {
+    return count === 1 ? '1 Item' : `${count} Items`;
   };
 
   const handleAddToCart = (e: React.MouseEvent) => {
@@ -76,6 +86,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
               aria-label="Add to cart" 
             >
               <ShoppingCartIcon />
+              {cartItemsCount > 0 && (
+                <span className="cart-items-count">
+                  {formatItemsCount(cartItemsCount)}
+                </span>
+              )}
             </button>
           )}
         </div>

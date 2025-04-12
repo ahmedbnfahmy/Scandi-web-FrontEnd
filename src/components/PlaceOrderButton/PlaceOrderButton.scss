@@ -1,0 +1,42 @@
+.place-order-button {
+  background-color: #5ECE7B;
+  color: white;
+  font-weight: 600;
+  padding: 16px 32px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-size: 14px;
+  text-transform: uppercase;
+  
+  &:hover:not(:disabled) {
+    // background-color: darken(#5ECE7B, 10%);
+  }
+  
+  &.disabled {
+    background-color: #cccccc;
+    color: #999999;
+    cursor: not-allowed;
+  }
+  
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+  
+  .error-indicator {
+    display: inline-block;
+    color: red;
+    margin-left: 8px;
+    font-weight: bold;
+  }
+  
+  /* Additional styling for when it's used in the cart overlay */
+  &.cart-overlay__button--checkout {
+    flex: 1;
+    height: 43px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+} 

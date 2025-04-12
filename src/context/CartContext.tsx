@@ -1,6 +1,21 @@
 import React, { createContext, useContext, useState, ReactNode, useCallback } from 'react';
 import { Product } from './types/productTypes';
 import { CartItem, CartContextType } from './types/cartTypes';
+import { CREATE_ORDER } from './mutations/orderMutations';
+import { graphqlClient } from '../utils/graphqlClient';
+
+interface CreateOrderResponse {
+  createOrder: {
+    id: string;
+    items: Array<{
+      productId: string;
+      quantity: number;
+      selectedAttributes: Record<string, string>;
+    }>;
+    totalAmount: number;
+    createdAt: string;
+  };
+}
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
@@ -18,6 +33,8 @@ interface CartProviderProps {
 
 export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   const [items, setItems] = useState<CartItem[]>([]);
+  const [orderLoading, setOrderLoading] = useState(false);
+  const [orderError, setOrderError] = useState<Error | null>(null);
 
   const addToCart = useCallback((product: Product, selectedAttributes: Record<string, string>) => {
     setItems(prevItems => {
@@ -77,22 +94,71 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     setItems([]);
   }, []);
 
+  const placeOrder = useCallback(async () => {
+    if (items.length === 0) return null;
+    
+    setOrderLoading(true);
+    setOrderError(null);
+    
+    try {
+      const orderItems = items.map(item => ({
+        productId: item.product.id,
+        quantity: item.quantity,
+        selectedAttributes: item.selectedAttributes
+      }));
+      
+      const totalAmount = items.reduce((sum, item) => 
+        sum + (item.product.prices[0].amount * item.quantity), 0);
+      
+      // Execute the mutation with graphql-request and properly type the response
+      const response = await graphqlClient.request<CreateOrderResponse>(CREATE_ORDER, {
+        items: orderItems,
+        totalAmount: totalAmount
+      });
+      
+      clearCart();
+      
+      setOrderLoading(false);
+      return response.createOrder;
+    } catch (err) {
+      console.error('Error placing order:', err);
+      setOrderError(err instanceof Error ? err : new Error('Unknown error occurred'));
+      setOrderLoading(false);
+      throw err;
+    }
+  }, [items, clearCart]);
+
   // Calculate derived values
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
-  
   const totalPrice = items.reduce((sum, item) => 
     sum + (item.product.prices[0].amount * item.quantity), 0);
 
-  // Create a memoized context value
+  const formattedItemsCount = totalItems === 1 ? '1 Item' : `${totalItems} Items`;
   const contextValue = React.useMemo(() => ({
     items,
     addToCart,
     removeFromCart,
     updateQuantity,
     clearCart,
+    placeOrder,
+    orderLoading,
+    orderError,
     totalItems,
-    totalPrice
-  }), [items, addToCart, removeFromCart, updateQuantity, clearCart, totalItems, totalPrice]);
+    totalPrice,
+    formattedItemsCount
+  }), [
+    items, 
+    addToCart, 
+    removeFromCart, 
+    updateQuantity, 
+    clearCart, 
+    placeOrder,
+    orderLoading,
+    orderError,
+    totalItems, 
+    totalPrice,
+    formattedItemsCount
+  ]);
 
   return (
     <CartContext.Provider value={contextValue}>
