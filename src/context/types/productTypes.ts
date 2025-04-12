@@ -1,3 +1,6 @@
+import { ErrorDetails } from '../../utils/errorHandlers';
+
+
 export interface Price {
     currency: {
       symbol: string;
@@ -53,10 +56,10 @@ export interface Price {
   export interface ProductDataContextType {
     loading: boolean;
     error: Error | null;
+    errorDetails: ErrorDetails | null; 
     product: Product | null;
     products: Product[];
     categories: string[];
-    connectionFailed: boolean; // Add this
     fetchProduct: (id: string) => Promise<void>;
     fetchProducts: (category?: string) => Promise<void>;
     clearProduct: () => void;
