@@ -92,8 +92,18 @@ const ProductDetailsPage: React.FC = () => {
     );
   };
 
+  const canAddToCart = () => {
+    if (!product) return false;
+    
+    if (!product.inStock) return false;
+    
+    return product.attributes.every(attr => 
+      selectedAttributes[attr.name] && selectedAttributes[attr.name] !== ''
+    );
+  };
+
   const handleAddToCart = () => {
-    if (!product || !isAllAttributesSelected()) return;
+    if (!product || !canAddToCart()) return;
     addToCart(product, selectedAttributes);
   };
 
@@ -141,6 +151,12 @@ const ProductDetailsPage: React.FC = () => {
         <h1 className="pdp-title">{product.brand}</h1>
         <h2 className="pdp-subtitle">{product.name}</h2>
         
+        {!product.inStock && (
+          <div className="pdp-out-of-stock-notice">
+            This product is currently out of stock
+          </div>
+        )}
+        
         {product.attributes.map(attribute => (
           <div 
             key={attribute.name}
@@ -181,12 +197,14 @@ const ProductDetailsPage: React.FC = () => {
         
         {/* Add to Cart Button */}
         <button
-          className={`pdp-add-to-cart ${!isAllAttributesSelected() ? 'disabled' : ''}`}
-          disabled={!isAllAttributesSelected()}
+          className={`pdp-add-to-cart ${!canAddToCart() ? 'disabled' : ''}`}
+          disabled={!canAddToCart()}
           onClick={handleAddToCart}
           data-testid="add-to-cart"
         >
-          ADD TO CART
+          {!product.inStock ? 'OUT OF STOCK' : 
+           !isAllAttributesSelected() ? 'SELECT OPTIONS' : 
+           'ADD TO CART'}
         </button>
         
         {/* Product Description */}
