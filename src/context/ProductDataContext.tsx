@@ -61,7 +61,7 @@ export const ProductDataProvider: React.FC<ProductDataProviderProps> = ({ childr
         setProducts(result);
       } catch (err) {
         handleError(err);
-        setProducts([]);
+        // setProducts([]);
       } finally {
         setLoading(false);
       }

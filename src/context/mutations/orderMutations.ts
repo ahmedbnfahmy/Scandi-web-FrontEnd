@@ -1,17 +1,17 @@
 export const CREATE_ORDER = `
-  mutation CreateOrder($items: [OrderItemInput!]!, $totalAmount: Float!) {
-    createOrder(input: {
-      items: $items,
-      totalAmount: $totalAmount
-    }) {
-      id
+  mutation CreateOrder($input: OrderInput!) {
+    createOrder(input: $input) {
+      totalAmount
+      createdAt
       items {
         productId
         quantity
-        selectedAttributes
+        selectedAttributes {
+          attributeName
+          attributeItemId
+          displayValue
+        }
       }
-      totalAmount
-      createdAt
     }
   }
 `;
