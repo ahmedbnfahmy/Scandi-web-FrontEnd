@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-// import parse from 'html-react-parser';
+import parse from 'html-react-parser';
 import './ProductDetailsPage.scss';
 import { Product } from '../../context/types/productTypes';
 import { useProductData } from '../../context/ProductDataContext';
@@ -208,9 +208,9 @@ const ProductDetailsPage: React.FC = () => {
         </button>
         
         {/* Product Description */}
-        {/* <div className="pdp-description" data-testid="product-description">
+        <div className="pdp-description" data-testid="product-description">
           {parse(product.description)}
-        </div> */}
+        </div>
       </div>
     </div>
   );
