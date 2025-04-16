@@ -1,4 +1,4 @@
-FROM node:20-alpine as build
+FROM node:20-alpine
 
 WORKDIR /app
 
@@ -12,23 +12,11 @@ COPY . .
 # Build the application
 RUN npm run build
 
-# Production stage
-FROM nginx:alpine
+# Install a simple server to serve static content
+RUN npm install -g serve
 
-# Copy built assets from the build stage
-COPY --from=build /app/dist /usr/share/nginx/html
+# Expose the port that serve will use
+EXPOSE 3000
 
-# Add nginx configuration for single-page application
-RUN echo 'server { \
-    listen 80; \
-    location / { \
-        root /usr/share/nginx/html; \
-        index index.html; \
-        try_files $uri $uri/ /index.html; \
-    } \
-}' > /etc/nginx/conf.d/default.conf
-
-# Expose port
-EXPOSE 80
-
-CMD ["nginx", "-g", "daemon off;"]
+# Start the server
+CMD ["serve", "-s", "dist", "-p", "3000"]
