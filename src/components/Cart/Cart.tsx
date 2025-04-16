@@ -63,7 +63,7 @@ const Cart: React.FC = () => {
           </div>
           
           {/* Place Order Button */}
-          <PlaceOrderButton />
+          <PlaceOrderButton onError={() => {}} onSuccess={() => {}}/>
         </>
       )}
     </div>
