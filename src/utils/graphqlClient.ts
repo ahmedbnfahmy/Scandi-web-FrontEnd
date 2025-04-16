@@ -1,6 +1,6 @@
 import { GraphQLClient, ClientError } from 'graphql-request';
 
-export const API_URL = import.meta.env.VITE_GRAPHQL_API || 'http://localhost:8000/graphql';
+export const API_URL = import.meta.env.VITE_GRAPHQL_API;
 
 export const graphqlClient = new GraphQLClient(API_URL, {
   headers: {
