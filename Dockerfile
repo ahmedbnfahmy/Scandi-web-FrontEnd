@@ -9,6 +9,8 @@ RUN npm ci
 # Copy the rest of the application
 COPY . .
 
+ARG GRAPHQL_API
+
 # Build the application
 RUN npm run build
 
