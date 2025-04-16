@@ -1,58 +1,90 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useCart } from '../../context/CartContext';
+import { CREATE_ORDER } from '../../context/mutations/orderMutations';
+import { graphqlClient } from '../../utils/graphqlClient';
 import './PlaceOrderButton.scss';
 
 interface PlaceOrderButtonProps {
   className?: string;
-  onSuccess?: () => void;
-  onError?: (error: any) => void;
-  children?: React.ReactNode;
+  onSuccess: () => void;
+  onError: (error: any) => void;
 }
 
-const PlaceOrderButton: React.FC<PlaceOrderButtonProps> = ({ 
-  className = '',
+const PlaceOrderButton: React.FC<PlaceOrderButtonProps> = ({
+  className,
   onSuccess,
-  onError,
-  children
+  onError
 }) => {
-  const { items, placeOrder, orderLoading, orderError } = useCart();
-  
+  const { items, clearCart } = useCart();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const calculateTotalAmount = () => {
+    return items.reduce((total, item) => {
+      const price = item.product && item.product.prices && item.product.prices[0] 
+        ? item.product.prices[0].amount 
+        : 0;
+      return total + (price * item.quantity);
+    }, 0);
+  };
+
   const handlePlaceOrder = async () => {
-    if (items.length === 0) return;
-    
+    if (items.length === 0) {
+      onError(new Error('Cannot place an order with an empty cart'));
+      return;
+    }
+
+    console.log('Cart items:', JSON.stringify(items, null, 2));
+
+    setIsLoading(true);
+
     try {
-      const order = await placeOrder();
+      const orderItems = items.map(item => ({
+        productId: item.product.id,
+        quantity: item.quantity,
+        selectedAttributes: Object.entries(item.selectedAttributes || {}).map(([attrName, attrValue]) => ({
+          attributeName: attrName,
+          attributeItemId: attrValue,
+          displayValue: attrValue
+        }))
+      }));
+
+      const calculatedTotal = calculateTotalAmount();
+      console.log('Calculated total amount:', calculatedTotal);
       
-      if (order && onSuccess) {
-        onSuccess();
-      }
+      const orderInput = {
+        customerName: "Guest User",
+        customerEmail: "guest@example.com",
+        address: "Guest Address",
+        totalAmount: calculatedTotal,
+        items: orderItems
+      };
+
+      console.log('Sending order:', JSON.stringify(orderInput, null, 2));
+
+      const response = await graphqlClient.request(CREATE_ORDER, {
+        input: orderInput
+      });
+
+      console.log('Order placed successfully:', response);
       
-      // Show success message if no callback provided
-      if (order && !onSuccess) {
-        alert('Your order has been placed successfully!');
-      }
-    } catch (err) {
-      if (onError) {
-        onError(err);
-      } else {
-        alert('Failed to place your order. Please try again.');
-      }
+      clearCart();
+      
+      onSuccess();
+    } catch (error) {
+      console.error('Error placing order:', error);
+      onError(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const isCartEmpty = items.length === 0;
-
   return (
     <button
-      className={`place-order-button ${isCartEmpty ? 'disabled' : ''} ${className}`}
+      className={`place-order-button ${className || ''} ${isLoading ? 'loading' : ''}`}
       onClick={handlePlaceOrder}
-      disabled={isCartEmpty || orderLoading}
-      data-testid="place-order-button"
+      disabled={isLoading || items.length === 0}
     >
-      {orderLoading 
-        ? 'Processing...' 
-        : children || 'PLACE ORDER'}
-      {orderError && <span className="error-indicator">!</span>}
+      {isLoading ? 'Processing...' : 'Checkout'}
     </button>
   );
 };

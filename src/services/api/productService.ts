@@ -19,7 +19,6 @@ export const fetchProduct = async (id: string): Promise<Product> => {
     throw new Error('Product ID is required');
   }
   
-  console.log('Fetching product from:', API_URL);
   const result = await graphqlClient.request<ProductResponse>(GET_PRODUCT, { id });
   
   handleGraphQLErrors(result, 'product fetch');
@@ -32,7 +31,6 @@ export const fetchProduct = async (id: string): Promise<Product> => {
 };
 
 export const fetchProducts = async (category?: string): Promise<Product[]> => {
-  console.log('Fetching products from:', API_URL);
   const response = await graphqlClient.request<ProductsResponse>(GET_PRODUCTS);
   
   if (!response) {

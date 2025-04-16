@@ -18,6 +18,7 @@ export interface CartContextType {
   totalItems: number;
   totalPrice: number;
   formattedItemsCount: string; 
+  totalAmount :number
 }
 
 export interface AttributeOption {

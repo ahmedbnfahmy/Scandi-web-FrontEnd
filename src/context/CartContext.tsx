@@ -37,6 +37,12 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   const [orderError, setOrderError] = useState<Error | null>(null);
 
   const addToCart = useCallback((product: Product, selectedAttributes: Record<string, string>) => {
+    // Don't add to cart if product is out of stock
+    if (!product.inStock) {
+      console.error('Cannot add out-of-stock product to cart');
+      return;
+    }
+    
     setItems(prevItems => {
       const existingItemIndex = prevItems.findIndex(
         item => 
@@ -134,8 +140,15 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     sum + (item.product.prices[0].amount * item.quantity), 0);
 
   const formattedItemsCount = totalItems === 1 ? '1 Item' : `${totalItems} Items`;
-  const contextValue = React.useMemo(() => ({
+
+  const calculateTotalAmount = () => {
+    return items.reduce((total, item) => total + (item.product.prices[0].amount * item.quantity), 0);
+  };
+
+  const cartContextValue: CartContextType = {
     items,
+    totalItems,
+    totalAmount: calculateTotalAmount(),
     addToCart,
     removeFromCart,
     updateQuantity,
@@ -143,25 +156,12 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     placeOrder,
     orderLoading,
     orderError,
-    totalItems,
     totalPrice,
     formattedItemsCount
-  }), [
-    items, 
-    addToCart, 
-    removeFromCart, 
-    updateQuantity, 
-    clearCart, 
-    placeOrder,
-    orderLoading,
-    orderError,
-    totalItems, 
-    totalPrice,
-    formattedItemsCount
-  ]);
+  };
 
   return (
-    <CartContext.Provider value={contextValue}>
+    <CartContext.Provider value={cartContextValue}>
       {children}
     </CartContext.Provider>
   );
