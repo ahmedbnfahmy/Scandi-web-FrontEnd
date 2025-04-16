@@ -10,6 +10,7 @@ RUN npm ci
 COPY . .
 
 ARG GRAPHQL_API
+ENV GRAPHQL_API=${GRAPHQL_API}
 
 # Build the application
 RUN npm run build
