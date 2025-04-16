@@ -1,5 +1,4 @@
-# Build stage
-FROM node:20-alpine AS build
+FROM node:20-alpine
 
 # Set working directory
 WORKDIR /app
@@ -12,23 +11,12 @@ RUN npm ci
 
 # Copy project files
 COPY . .
-
 ARG GRAPHQL_API
-
 # Build the app
 RUN npm run build
 
-# Production stage
-FROM nginx:alpine
+# Set the default command to run in development mode
+CMD ["npm", "run", "dev"]
 
-# Copy built app from the build stage
-COPY --from=build /app/dist /usr/share/nginx/html
-
-# Copy custom nginx configuration if needed
-# COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-# Expose port
-EXPOSE 80
-
-# Command to run
-CMD ["nginx", "-g", "daemon off;"]
+# Expose the default Vite development port
+EXPOSE 5173
