@@ -173,6 +173,7 @@ const ProductDetailsPage: React.FC = () => {
                     pdp-attribute-${attribute.type} 
                     ${selectedAttributes[attribute.name] === item.id ? 'selected' : ''}
                   `}
+                  data-testid={`product-attribute-${attribute.name.toLowerCase().replace(/\s+/g, '-')}-${item.value}`}
                   style={
                     attribute.type === 'swatch' 
                       ? { backgroundColor: item.value } 

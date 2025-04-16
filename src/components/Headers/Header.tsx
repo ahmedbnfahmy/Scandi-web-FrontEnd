@@ -140,7 +140,7 @@ const Header: React.FC<HeaderProps> = ({ logoText = 'MyStore' }) => {
             {displayCategories.map((category) => (
               <li key={category.id}>
                 <Link
-                  to={category.id === 'all' ? '/' : `/${category.id}`}
+                  to={category.id === 'all' ? '/all' : `/${category.id}`}
                   className={`header__category-link ${
                     activeCategory === category.id ? 'header__category-link--active' : ''
                   }`}

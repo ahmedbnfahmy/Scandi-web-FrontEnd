@@ -45,7 +45,7 @@ const CartOverlay: React.FC<CartOverlayProps> = ({
   const itemCount = cartItems.reduce((count, item) => count + item.quantity, 0);
 
   return (
-    <div className={`cart-overlay ${isOpen ? 'open' : ''}`}>
+    <div className={`cart-overlay ${isOpen ? 'open' : ''}`} data-testid="cart-overlay">
       <div className="cart-overlay__backdrop" onClick={onClose}></div>
       <div className="cart-overlay__content">
         <div className="cart-overlay__header">
