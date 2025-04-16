@@ -23,7 +23,9 @@ const ProductListingPage: React.FC = () => {
   
   const handleAddToCart = (product: any) => {
     addToCart(product, {});
-  };
+    const event = new CustomEvent('openCartOverlay');
+    window.dispatchEvent(event);
+  }
 
   if (loading) {
     return <div className="loading">Loading products...</div>;

@@ -131,7 +131,17 @@ const Header: React.FC<HeaderProps> = ({ logoText = 'MyStore' }) => {
       };
     });
   }, [items]);
-
+  useEffect(() => {
+    const handleOpenCartOverlay = () => {
+      setIsCartOpen(true);
+    };
+    
+    window.addEventListener('openCartOverlay', handleOpenCartOverlay);
+    
+    return () => {
+      window.removeEventListener('openCartOverlay', handleOpenCartOverlay);
+    };
+  }, []);
   return (
     <header className="header" data-testid="header">
       <nav className="header__nav">

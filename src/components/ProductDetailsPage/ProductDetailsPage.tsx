@@ -22,6 +22,10 @@ const ProductDetailsPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [selectedAttributes, setSelectedAttributes] = useState<Record<string, string>>({});
+  const triggerCartOpen = () => {
+    const event = new CustomEvent('openCartOverlay');
+    window.dispatchEvent(event);
+  };
 
   useEffect(() => {
     if (productId && (!contextProduct || contextProduct.id !== productId)) {
@@ -105,6 +109,7 @@ const ProductDetailsPage: React.FC = () => {
   const handleAddToCart = () => {
     if (!product || !canAddToCart()) return;
     addToCart(product, selectedAttributes);
+    triggerCartOpen();
   };
 
   if (loading) {
