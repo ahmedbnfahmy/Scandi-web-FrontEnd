@@ -117,18 +117,6 @@ src/
 - View total price
 - Proceed to checkout
 
-## Development Tools
-
-### Comment Removal Tool
-
-This project includes a PHP script to clean up comments before deployment:
-
-```bash
-php commentScript.php
-```
-
-The script removes all comments from code files while preserving configuration files. See the script's documentation for more details.
-
 ## Testing
 
 Run the test suite:
