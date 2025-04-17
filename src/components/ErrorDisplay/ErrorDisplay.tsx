@@ -11,7 +11,7 @@ const ErrorDisplay: React.FC<ErrorDisplayProps> = ({
   errorDetails, 
   onRetry = () => window.location.reload() 
 }) => {
-  // Choose appropriate UI based on error type
+  
   const getErrorUI = () => {
     switch (errorDetails.type) {
       case ErrorType.CONNECTION:

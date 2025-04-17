@@ -24,7 +24,7 @@ export const executeRequest = async <T = any>(
       if (error.response?.errors && error.response.errors.length > 0) {
         errorMessage = 'Server error: ' + (error.response.errors[0]?.message || 'Unknown error');
       } 
-      // HTTP errors
+      
       else if (error.response) {
         errorMessage = `HTTP error ${error.response.status || ''}: ${error.response.statusText || 'Unknown error'}`;
       }

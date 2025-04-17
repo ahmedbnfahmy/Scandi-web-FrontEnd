@@ -61,7 +61,7 @@ export const ProductDataProvider: React.FC<ProductDataProviderProps> = ({ childr
         setProducts(result);
       } catch (err) {
         handleError(err);
-        // setProducts([]);
+        
       } finally {
         setLoading(false);
       }
@@ -90,7 +90,7 @@ export const ProductDataProvider: React.FC<ProductDataProviderProps> = ({ childr
     clearProduct
   ]);
 
-  // Show error UI if we should stop rendering the app
+  
   if (errorDetails && errorDetails.shouldStopRendering) {
     return <ErrorDisplay errorDetails={errorDetails} />;
   }

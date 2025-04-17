@@ -13,7 +13,7 @@ interface ProductCardProps {
 const ProductCard: React.FC<ProductCardProps> = ({ 
   product, 
   onAddToCart, 
-  cartItemsCount = 0 // Default to 0 if not provided
+  cartItemsCount = 0 
 }) => {
   const productImage = product.gallery && product.gallery.length > 0 
     ? product.gallery[0] 
@@ -34,7 +34,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
     }).format(price);
   };
 
-  // Add this function to format items count
+  
   const formatItemsCount = (count: number) => {
     return count === 1 ? '1 Item' : `${count} Items`;
   };

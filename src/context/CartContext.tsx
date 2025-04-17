@@ -37,7 +37,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   const [orderError, setOrderError] = useState<Error | null>(null);
 
   const addToCart = useCallback((product: Product, selectedAttributes: Record<string, string>) => {
-    // Don't add to cart if product is out of stock
+    
     if (!product.inStock) {
       console.error('Cannot add out-of-stock product to cart');
       return;
@@ -116,7 +116,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
       const totalAmount = items.reduce((sum, item) => 
         sum + (item.product.prices[0].amount * item.quantity), 0);
       
-      // Execute the mutation with graphql-request and properly type the response
+      
       const response = await graphqlClient.request<CreateOrderResponse>(CREATE_ORDER, {
         items: orderItems,
         totalAmount: totalAmount
@@ -134,7 +134,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     }
   }, [items, clearCart]);
 
-  // Calculate derived values
+  
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = items.reduce((sum, item) => 
     sum + (item.product.prices[0].amount * item.quantity), 0);

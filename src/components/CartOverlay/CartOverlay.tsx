@@ -60,7 +60,7 @@ const CartOverlay: React.FC<CartOverlayProps> = ({
             <p className="cart-overlay__empty">Your cart is empty</p>
           ) : (
             cartItems.map((item, index) => {
-              // Create a unique ID for each cart item based on product and selected attributes
+              
               const itemKey = `${item.id}-${Object.values(item.attributes)
                 .map(attr => attr.selected)
                 .join('-')}`;
