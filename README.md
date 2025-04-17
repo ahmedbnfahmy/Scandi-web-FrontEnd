@@ -1,8 +1,10 @@
-# E-Commerce Frontend
+# ScandiWeb E-Commerce Frontend
 
 ## Modern E-Commerce Platform Built with React, Vite, TypeScript, and GraphQL
 
 A fully-featured shopping experience with responsive design, product customization, and seamless cart functionality. Leveraging the power of TypeScript for type safety and GraphQL for efficient data fetching.
+
+Live Demo: [https://scandi-web-frontend-production-7ac7.up.railway.app/](https://scandi-web-frontend-production-7ac7.up.railway.app/)
 
 ## Features
 
@@ -161,3 +163,8 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 - [GraphQL](https://graphql.org/) for the efficient data fetching architecture
 - [React](https://reactjs.org/) and [Vite](https://vitejs.dev/) communities for their excellent tools
+
+
+## QA Test Results
+![Screenshot from 2025-04-16 23-30-27](https://github.com/user-attachments/assets/9a1c2b44-c154-426b-8ae5-4315802e853f)
+
